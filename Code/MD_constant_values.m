@@ -9,8 +9,8 @@ classdef MD_constant_values
     
     % Variables - Additional plot with hospital and cemetery visualisation 
     % percentage value of the number of people (people_nr)
-    hospital_size = 0.2;
-    cemetery_size = 0.2;
+    hospital_size = 0.25;
+    cemetery_size = 0.25;
     
     %infected
     infection_prob=0.8;
