@@ -97,6 +97,7 @@ classdef Person < handle
             for i=max(obj.pos_x-1,1):min(obj.pos_x+1,MD_constant_values.grid_size)
                 for j=max(obj.pos_y-1,1):min(obj.pos_y+1,MD_constant_values.grid_size)
                     if ~(i==obj.pos_x && j==obj.pos_y)
+                        
                         GetInfected(obj,i,j,GridPrev)
                     end
                 end
@@ -125,6 +126,7 @@ classdef Person < handle
                 end
                 
                 if ~isempty(new_positions)
+                    
                     GridPrev(obj.pos_x,obj.pos_y)=-1;
                     new_position=randi(length(new_positions));
                     obj.pos_x=new_positions(new_position,1);

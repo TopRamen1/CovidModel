@@ -14,6 +14,7 @@ classdef MD_constant_values
     hosp_prob = 0.1;
     R = 8;
     H = 5;
+    S = 5;
     
     simulation_delay=0.5;
     simulation_steps=100;
