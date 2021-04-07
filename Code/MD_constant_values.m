@@ -15,9 +15,11 @@ classdef MD_constant_values
     R = 8;
     H = 5;
     S = 5;
+    W = 0;
+    volcano_ = 1;
     
     simulation_delay=0.5;
-    simulation_steps=100;
+    simulation_steps=400;
     
     % states Q1
     no_security_measures=0;

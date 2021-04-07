@@ -9,20 +9,26 @@ classdef Person < handle
         state_q1;
         state_q2;
         movement_prob;
+        is_tourist;
         r;
         h;
+        w;
+        volcano;
     end
     
     methods
-        function obj = Person(pos_x_,pos_y_,q1,q2,id_number_)
+        function obj = Person(pos_x_,pos_y_,q1,q2,id_number_,is_tourist_)
             if nargin > 0
                 obj.pos_x=pos_x_;
                 obj.pos_y=pos_y_;
                 obj.state_q1=q1;
                 obj.state_q2=q2;
+                obj.is_tourist=is_tourist_;
                 obj.id_number=id_number_;
                 obj.r=MD_constant_values.R;
                 obj.h=MD_constant_values.H;
+                obj.w=MD_constant_values.W;
+                obj.volcano=MD_constant_values.volcano_
                 obj.movement_prob=MD_constant_values.initial_movement_prob;
                 
             end
@@ -111,6 +117,16 @@ classdef Person < handle
         
         
         function GridPrev=Move(obj,GridPrev)
+            if obj.is_tourist == 1
+                obj.w = obj.w + 1
+                if rem(obj.w,100) == 0 
+                    %obj.is_tourist = ~(obj.is_tourist)
+                    obj.volcano = ~(obj.volcano)
+                end
+            else
+                obj.volcano = 0
+            end
+            
             if rand<=obj.movement_prob
                 %disp('----------------------------------------------------------')
                 %disp(['Person ' num2str(obj.id_number) ' pos ' num2str(obj.pos_x) ' ' num2str(obj.pos_y)]);
@@ -127,18 +143,71 @@ classdef Person < handle
                 end
                 
                 if ~isempty(new_positions)
-                    
                     GridPrev(obj.pos_x,obj.pos_y)=-1;
-                    new_position=randi(length(new_positions));
-                    obj.pos_x=new_positions(new_position,1);
-                    obj.pos_y=new_positions(new_position,2);
-                    GridPrev(obj.pos_x,obj.pos_y)=1;
+                    if obj.volcano==1
+                        minimum_x = 1;
+                        minimum_y = 1;
+                        for z = 1:length(new_positions)-1
+                            if new_positions(z,1)<=new_positions(minimum_x,1) && new_positions(z,2)<=obj.pos_y
+                                minimum_x = z
+                            end
+                        end
+                        for c = 1:length(new_positions)-1
+                            if new_positions(c,2)<=new_positions(minimum_y,2) && new_positions(c,1)<=obj.pos_x
+                                minimum_y = c
+                            end
+                        end 
+                        if rem(obj.w,2) == 0 
+                            minimum = minimum_x
+                        else
+                            minimum = minimum_y
+                        end
+                        obj.pos_x=new_positions(minimum,1)
+                        obj.pos_y=new_positions(minimum,2)
+                        GridPrev(obj.pos_x,obj.pos_y)=1;
+                    elseif obj.volcano==0 && obj.is_tourist==1
+                        GridPrev(obj.pos_x,obj.pos_y)=-1;
+                        maximum_x = 1;
+                        maximum_y = 1;
+                        for z = 1:length(new_positions)-1
+                            if new_positions(z,1)>=new_positions(maximum_x,1) && new_positions(z,2)>=obj.pos_y
+                                maximum_x = z
+                            end
+                        end
+                        for c = 1:length(new_positions)-1
+                            if new_positions(c,2)>=new_positions(maximum_y,2) && new_positions(c,1)>=obj.pos_x
+                                maximum_y = c
+                            end
+                        end 
+                        x=rand
+                        if rand < 0.5 
+                            maximum = maximum_y
+                        else
+                            maximum = maximum_x
+                        end
+                        obj.pos_x=new_positions(maximum,1)
+                        obj.pos_y=new_positions(maximum,2)
+                        GridPrev(obj.pos_x,obj.pos_y)=1;
+                    elseif obj.is_tourist==0
+                        GridPrev(obj.pos_x,obj.pos_y)=-1;
+                        new_position=randi(length(new_positions));
+                        obj.pos_x=new_positions(new_position,1);
+                        obj.pos_y=new_positions(new_position,2);
+                        GridPrev(obj.pos_x,obj.pos_y)=1;
+                    end
                 end
             end
         end
         
         function Plot(obj)
             %plot(obj.pos_x,obj.pos_y,'bo');
+%             if obj.volcano==1
+%                 colour='*g';
+%             elseif obj.volcano==0 && obj.is_tourist==1
+%                 colour='*r';
+%             elseif obj.is_tourist==0
+%                 colour='*b';
+         
             if obj.state_q2==MD_constant_values.healthy
                 colour='.b';
             elseif obj.state_q2==MD_constant_values.infected

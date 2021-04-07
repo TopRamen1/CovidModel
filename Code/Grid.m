@@ -20,11 +20,16 @@ classdef Grid < handle
                 
             for i=1:obj.people_number
                 pos = randi([1 obj.size],1,2);
-                
-                if i<= infected_number
-                    People(i)=Person(pos(1),pos(2),MD_constant_values.infecting,MD_constant_values.infected,i);
+                tourism=rand;
+                if tourism<0.90
+                    tour=0
                 else
-                    People(i)=Person(pos(1),pos(2),MD_constant_values.no_security_measures,MD_constant_values.healthy,i);
+                    tour=1
+                end
+                if i<= infected_number
+                    People(i)=Person(pos(1),pos(2),MD_constant_values.infecting,MD_constant_values.infected,i, tour);
+                else
+                    People(i)=Person(pos(1),pos(2),MD_constant_values.no_security_measures,MD_constant_values.healthy,i, tour);
                 end
                 %obj.people(i)=Person(pos(1),pos(2));
             end
@@ -104,6 +109,7 @@ classdef Grid < handle
             set(gcf,'color','w');
             xlim([0 obj.size]);
             ylim([0 obj.size]);
+            plot(0.3,0.3,'*r')
             hold on;
             
             for i=1:obj.people_number
