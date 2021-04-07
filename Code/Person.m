@@ -11,6 +11,7 @@ classdef Person < handle
         movement_prob;
         r;
         h;
+        s;
     end
     
     methods
@@ -23,6 +24,7 @@ classdef Person < handle
                 obj.id_number=id_number_;
                 obj.r=MD_constant_values.R;
                 obj.h=MD_constant_values.H;
+                obj.s=MD_constant_values.S;
                 obj.movement_prob=MD_constant_values.initial_movement_prob;
                 
             end
@@ -47,16 +49,34 @@ classdef Person < handle
                if obj.r == 0
                    rn = rand;
                    %disp(['rand' num2str(rn)])
-                   if rn<=MD_constant_values.sick_prob
+                   if rn<=MD_constant_values.infected_sick_prob
                        obj.state_q1=MD_constant_values.infecting;
                        obj.state_q2=MD_constant_values.infected_and_sick;
-                       disp(['Got sick ' num2str(obj.id_number)]);
+                       disp(['Got sick and infected ' num2str(obj.id_number)]);
                    else
                        obj.state_q1=MD_constant_values.no_security_measures;
                        obj.state_q2=MD_constant_values.recovered;
                        disp(['Recovered ' num2str(obj.id_number)]);
                    end
                end   
+            end
+            
+            if obj.state_q2==MD_constant_values.sick
+                if obj.s > 0
+                    obj.s = obj.s - 1;
+                else
+                   rn = rand;
+                   %disp(['rand' num2str(rn)])
+                   if rn<=MD_constant_values.sick_hosp_prob
+                       obj.state_q1=MD_constant_values.protecting_others;
+                       obj.state_q2=MD_constant_values.in_hospital;
+                       disp(['Got hospitalized ' num2str(obj.id_number)]);
+                   else
+                       obj.state_q1=MD_constant_values.no_security_measures;
+                       obj.state_q2=MD_constant_values.healthy;
+                       disp(['Got healthy ' num2str(obj.id_number)]);
+                   end
+                end
             end
         end
         
@@ -93,7 +113,12 @@ classdef Person < handle
         end
         
         function GetSick(obj)
-            
+            if obj.state_q2==MD_constant_values.healthy && rand<=MD_constant_values.sick_prob
+                disp(['Got sick ' num2str(obj.id_number)]);
+                obj.state_q1=MD_constant_values.no_security_measures;
+                obj.state_q2=MD_constant_values.sick;
+                obj.s=MD_constant_values.S;
+            end
         end
         
         function DefineState(obj,GridPrev)
@@ -109,6 +134,7 @@ classdef Person < handle
             GetHealthy(obj)
             GetHospitalized(obj)
             GetOutOfHospital(obj)
+            GetSick(obj)
         end
         
         
@@ -154,6 +180,8 @@ classdef Person < handle
                 colour='.m';
             elseif obj.state_q2==MD_constant_values.dead
                 colour='.k';
+            elseif obj.state_q2==MD_constant_values.sick
+                colour='.c';
             end
             
             

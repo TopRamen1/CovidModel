@@ -76,9 +76,9 @@ classdef Grid < handle
              text(x1+2, x2+1, txt)
              plot(x, y, 'b-', 'LineWidth', 3);
              hold on;
-             temp = recovered_nr/(x2-1)
-             temp2 = fix(temp)
-             pozostali = (temp*10)-(temp2*10)
+             temp = recovered_nr/(x2-1);
+             temp2 = fix(temp);
+             pozostali = (temp*10)-(temp2*10);
              for i=1:temp2
                  for j=1:10
                      plot(i, j, 'r*')
