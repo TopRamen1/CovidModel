@@ -24,6 +24,7 @@ classdef Person < handle
                 obj.r=MD_constant_values.R;
                 obj.h=MD_constant_values.H;
                 obj.movement_prob=MD_constant_values.initial_movement_prob;
+                
             end
         end
         
