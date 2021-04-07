@@ -7,6 +7,11 @@ classdef MD_constant_values
     
     initial_movement_prob=0.5;
     
+    % Variables - Additional plot with hospital and cemetery visualisation 
+    % percentage value of the number of people (people_nr)
+    hospital_size = 0.2;
+    cemetery_size = 0.2;
+    
     %infected
     infection_prob=0.8;
     sick_prob = 0.99;
