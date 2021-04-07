@@ -92,6 +92,9 @@ classdef Person < handle
             end
         end
         
+        function GetSick(obj)
+            
+        end
         
         function DefineState(obj,GridPrev)
             %disp('----------------------------------------------------------')
