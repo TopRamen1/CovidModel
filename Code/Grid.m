@@ -53,11 +53,14 @@ classdef Grid < handle
                 GridPrev=obj.people(i).Move(GridPrev);
             end
             
+            % Variables to count number of specific type of people
             healthy_nr=0;
             recovered_nr=0;
             inf_and_s_nr=0;
+            in_hospital_nr = 0;
+            dead_nr = 0;
             
-             for i=1:obj.people_number
+            for i=1:obj.people_number
                 if obj.people(i).state_q2==MD_constant_values.healthy;
                     healthy_nr=healthy_nr+1;
                 end
@@ -67,42 +70,45 @@ classdef Grid < handle
                 if obj.people(i).state_q2==MD_constant_values.infected_and_sick;
                     inf_and_s_nr=inf_and_s_nr+1;
                 end
+                if obj.people(i).state_q2==MD_constant_values.in_hospital;
+                    in_hospital_nr=in_hospital_nr+1;
+                end
+                if obj.people(i).state_q2==MD_constant_values.dead;
+                    dead_nr=dead_nr+1;
+                end
                 
-             end
+            end
+
+            disp(['In hospital: ' num2str(in_hospital_nr) ', Dead: ' num2str(dead_nr) ', Recovered: ' num2str(recovered_nr) ', Healthy: ' num2str(healthy_nr) ', Infected and sick: ' num2str(inf_and_s_nr)]);
+           
+            % Display additional window with chart of dead and hospitalized people
+            f1 = figure(1);
+            movegui(f1,'northeast');
+             
+            % Hospital
+            hos_size = round(MD_constant_values.hospital_size*obj.size)
+            x1_1=0; x1_2=hos_size; y1_1=0; y1_2 = x1_2;
+            pos1 = [x1_1, x1_2, y1_1, y1_2];
+            text = 'Hospital';
+            color = 'r-';
+            text_pos1 = [x1_1, y1_2+2];
+            PlotPlace(in_hospital_nr, pos1, sprintf('%s', text), text_pos1, color, hos_size);
+            hold on;
+            % Cemetery
+            cem_size = round(MD_constant_values.cemetery_size*obj.size)
+            shift = 1;
+            x2_1=x1_2+shift; x2_2=x2_1+cem_size; y2_1=x2_1; y2_2 = x2_2;
+            pos2 = [x2_1, x2_2, y2_1, y2_2];
+            text = 'Cemetery';
+            color = 'b-';
+            text_pos2 = [x2_1, y2_2+2];
+            PlotPlace(dead_nr, pos2, sprintf('%s', text), text_pos2, color, cem_size);
             
-             disp(['Healthy ' num2str(healthy_nr) ' revovered ' num2str(recovered_nr) ' infected and sick ' num2str(inf_and_s_nr) ' infected ' num2str(obj.people_number-healthy_nr-inf_and_s_nr-recovered_nr)]);
-             
-    
-             figure(1);
-             x1=0; x2=round(sqrt(MD_constant_values.people_nr))+1; y1=0; y2 = x2;
-             x = [x1, x2, x2, x1, x1];
-             y = [y1, y1, y2, y2, y1];
-             txt = '\downarrow Recovered people ';
-             text(x1+2, x2+1, txt)
-             plot(x, y, 'b-', 'LineWidth', 3);
-             hold on;
-             temp = recovered_nr/(x2-1)
-             temp2 = fix(temp)
-             pozostali = (temp*10)-(temp2*10)
-             for i=1:temp2
-                 for j=1:10
-                     plot(i, j, 'r*')
-                     hold on
-                 end               
-             end
-             
-             for i=1:pozostali
-                 plot(temp2+1, i, 'r*')
-             end
-             
-             
-             
-             xlim([0 obj.size]);
-             ylim([0 obj.size]);
-            
+            xlim([0 obj.size]);
+            ylim([0 obj.size]);
         end
         
-        function PlotGrid(obj)
+       function PlotGrid(obj)
             
             figure(2);
             clf
@@ -112,12 +118,52 @@ classdef Grid < handle
             plot(0.3,0.3,'*r')
             hold on;
             
-            for i=1:obj.people_number
-                obj.people(i).Plot();
-            end
-        end
-        
-        
+           for i=1:obj.people_number
+               obj.people(i).Plot();
+           end
+       end
+       
     end
     
 end
+
+
+%-------------------------------------------------------------------------------------------------------%
+% Additional function to plot a visualisation of dead and hospitalized people
+
+function PlotPlace(people_nr, pos, txt, pos_text, color, plot_size) 
+% people_nr - people number, pos - square position, txt - text above a square, pos_text - text position
+% color - plot (people) color, plot_size - size of square
+    x = [pos(1), pos(2)+1, pos(2)+1, pos(1), pos(1)];
+    y = [pos(3), pos(3), pos(4)+1, pos(4)+1, pos(1)];
+    plot(x, y, color, 'LineWidth', 3);
+    text(pos_text(1), pos_text(2), txt)
+    hold on;
+    
+    a = people_nr/plot_size;
+    floor_a = fix(a);
+    rest = people_nr - (floor_a*plot_size);
+    
+    if floor_a ~= 0
+        for i=1:floor_a
+            for j=1:plot_size
+                plot(pos(1)+i, pos(3)+j, 'r*');
+                hold on;
+            end
+        end
+
+        for i=1:rest
+            plot(pos(1)+floor_a+1, pos(3)+i, 'r*');
+            hold on;
+        end
+    else
+        for i=1:rest
+            plot(pos(1)+1, pos(3)+i, 'r*');
+            hold on;
+        end
+    end
+    
+    hold off  
+end
+
+
