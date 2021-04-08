@@ -73,9 +73,9 @@ classdef Grid < handle
                 end
                 
             end
-            
+
             disp(['In hospital: ' num2str(in_hospital_nr) ', Dead: ' num2str(dead_nr) ', Recovered: ' num2str(recovered_nr) ', Healthy: ' num2str(healthy_nr) ', Infected and sick: ' num2str(inf_and_s_nr)]);
-             
+           
             % Display additional window with chart of dead and hospitalized people
             f1 = figure(1);
             movegui(f1,'northeast');
