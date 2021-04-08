@@ -129,8 +129,8 @@ classdef Grid < handle
             text_pos3 = [x3_1, y3_2+1.5];
             PlotPlace(quarantine_nr, pos3, sprintf('%s', text), text_pos3, color, quar_size, MD_constant_values.quarantine_capacity);           
             
-            xlim([0 obj.size]);
-            ylim([0 obj.size]);
+            xlim([0 hos_size+cem_size+quar_size+4*shift]);
+            ylim([0 hos_size+cem_size+quar_size+4*shift]);
             
             % Plot live data
             
