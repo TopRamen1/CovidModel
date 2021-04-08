@@ -6,6 +6,12 @@ classdef Grid < handle
         size;
         people_number;
         people;
+        Infected;
+        Healthy;
+        Recovered;
+        InHospital;
+        Dead;
+        v;
     end
     
     methods
@@ -32,7 +38,7 @@ classdef Grid < handle
             obj.people=People;
         end
         
-        function SimIteration(obj)
+        function SimIteration(obj,it)
             
             GridPrev=-ones(obj.size);
             
@@ -71,8 +77,9 @@ classdef Grid < handle
                 if obj.people(i).state_q2==MD_constant_values.dead;
                     dead_nr=dead_nr+1;
                 end
-                
             end
+            
+            infected_nr = obj.people_number - (in_hospital_nr + dead_nr + recovered_nr + healthy_nr);
 
             disp(['In hospital: ' num2str(in_hospital_nr) ', Dead: ' num2str(dead_nr) ', Recovered: ' num2str(recovered_nr) ', Healthy: ' num2str(healthy_nr) ', Infected and sick: ' num2str(inf_and_s_nr)]);
            
@@ -81,7 +88,7 @@ classdef Grid < handle
             movegui(f1,'northeast');
              
             % Hospital
-            hos_size = round(MD_constant_values.hospital_size*obj.size)
+            hos_size = round(MD_constant_values.hospital_size*obj.size);
             x1_1=0; x1_2=hos_size; y1_1=0; y1_2 = x1_2;
             pos1 = [x1_1, x1_2, y1_1, y1_2];
             text = 'Hospital';
@@ -90,7 +97,7 @@ classdef Grid < handle
             PlotPlace(in_hospital_nr, pos1, sprintf('%s', text), text_pos1, color, hos_size);
             hold on;
             % Cemetery
-            cem_size = round(MD_constant_values.cemetery_size*obj.size)
+            cem_size = round(MD_constant_values.cemetery_size*obj.size);
             shift = 1;
             x2_1=x1_2+shift; x2_2=x2_1+cem_size; y2_1=x2_1; y2_2 = x2_2;
             pos2 = [x2_1, x2_2, y2_1, y2_2];
@@ -101,6 +108,23 @@ classdef Grid < handle
             
             xlim([0 obj.size]);
             ylim([0 obj.size]);
+            
+            % Plot live data
+            
+            f3 = figure(3);
+            movegui(f3,'northwest');
+            
+            obj.Infected=[obj.Infected; infected_nr];
+            obj.Healthy=[obj.Healthy; healthy_nr];
+            obj.Recovered=[obj.Recovered; recovered_nr];
+            obj.InHospital = [obj.InHospital; in_hospital_nr];
+            obj.Dead = [obj.Dead; dead_nr];
+            
+            x = 1:it;
+            
+            plot(x,obj.Infected ,x,obj.Healthy ,x,obj.Recovered ,x,obj.InHospital ,x,obj.Dead);
+            legend({'Infected','Healthy','Recovered','In Hospital','Dead'},'Location','best')
+            disp(['len ' num2str(length(obj.Infected)) ' result ' num2str(length(1:it))]);
         end
         
        function PlotGrid(obj)
