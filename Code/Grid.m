@@ -6,7 +6,8 @@ classdef Grid < handle
         size;
         people_number;
         people;
-        in_hospital_nr=0;
+        in_hospital_nr = 0;
+        in_quarantine_nr = 0;
     end
     
     methods
@@ -42,7 +43,7 @@ classdef Grid < handle
             end
             
             for i=1:obj.people_number
-                obj.in_hospital_nr = obj.people(i).DefineState(GridPrev, obj.in_hospital_nr);
+                [obj.in_hospital_nr, obj.in_quarantine_nr] = obj.people(i).DefineState(GridPrev, obj.in_hospital_nr, obj.in_quarantine_nr);
             end
             
             for i=1:obj.people_number
@@ -55,6 +56,7 @@ classdef Grid < handle
             inf_and_s_nr=0;
             dead_nr = 0;
             hospital_nr = 0;
+            quarantine_nr = 0;
             for i=1:obj.people_number
                 if obj.people(i).state_q2==MD_constant_values.healthy;
                     healthy_nr=healthy_nr+1;
@@ -71,12 +73,16 @@ classdef Grid < handle
                 if obj.people(i).state_q2==MD_constant_values.dead;
                     dead_nr=dead_nr+1;
                 end
+                if obj.people(i).state_q2==MD_constant_values.in_quarantine;
+                    quarantine_nr=quarantine_nr+1;
+                end                
                 
             end
             
-            disp(['In hospital: ' num2str(hospital_nr) ', Dead: ' num2str(dead_nr) ', Recovered: ' num2str(recovered_nr) ', Healthy: ' num2str(healthy_nr) ', Infected and sick: ' num2str(inf_and_s_nr)]);
+            disp(['In hospital: ' num2str(hospital_nr) ', Dead: ' num2str(dead_nr) ', Quarantine: ' num2str(quarantine_nr) ', Healthy: ' num2str(healthy_nr) ', Infected and sick: ' num2str(inf_and_s_nr)]);
             obj.in_hospital_nr = hospital_nr;
-            
+            obj.in_quarantine_nr = quarantine_nr;
+
             % Display additional window with chart of dead and hospitalized people
             f1 = figure(1);
             movegui(f1,'northeast');
@@ -86,23 +92,33 @@ classdef Grid < handle
             x1_1=0; x1_2=hos_size; y1_1=0; y1_2 = x1_2;
             pos1 = [x1_1, x1_2, y1_1, y1_2];
             text = 'Hospital';
-            color = 'r-';
-            text_pos1 = [x1_1, y1_2+2];
+            color = 'p-';
+            text_pos1 = [x1_1, y1_2+1.5];
             PlotPlace(hospital_nr, pos1, sprintf('%s', text), text_pos1, color, hos_size, MD_constant_values.hospital_capacity);
             hold on;
             
             % Cemetery
             cem_size = MD_constant_values.cemetery_size;
             shift = 1;
-            x2_1=x1_2+shift; x2_2=x2_1+cem_size; y2_1=x2_1; y2_2 = x2_2;
+            x2_1 = x1_2+shift; x2_2 = x2_1+cem_size; y2_1 = x2_1; y2_2 = x2_2;
             pos2 = [x2_1, x2_2, y2_1, y2_2];
             text = 'Cemetery';
             color = 'b-';
-            text_pos2 = [x2_1, y2_2+2];
-            PlotPlace(dead_nr, pos2, sprintf('%s', text), text_pos2, color, cem_size, 50);
+            text_pos2 = [x2_1, y2_2+1.5];
+            PlotPlace(dead_nr, pos2, sprintf('%s', text), text_pos2, color, cem_size, MD_constant_values.cemetery_capacity);
+            hold on;
             
-            xlim([0 obj.size]);
-            ylim([0 obj.size]);
+            % Quarantine place
+            quar_size = MD_constant_values.quarantine_size;
+            x3_1=x2_2+shift; x3_2=x3_1+quar_size; y3_1=x3_1; y3_2 = x3_2;
+            pos3 = [x3_1, x3_2, y3_1, y3_2];
+            text = 'Quarantine place';
+            color = 'm-';
+            text_pos3 = [x3_1, y3_2+1.5];
+            PlotPlace(quarantine_nr, pos3, sprintf('%s', text), text_pos3, color, quar_size, MD_constant_values.quarantine_capacity);           
+            
+            xlim([0 hos_size+cem_size+quar_size+4*shift]);
+            ylim([0 hos_size+cem_size+quar_size+4*shift]);
         end
         
        function PlotGrid(obj)

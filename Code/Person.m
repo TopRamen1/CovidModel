@@ -45,13 +45,17 @@ classdef Person < handle
             end
         end
                
-        function GetQarantine(obj,i,j,GridPrev)
-            if GridPrev(i,j)==MD_constant_values.tested_positive
-                if obj.state_q2==MD_constant_values.healthy && rand<=MD_constant_values.quarantine_prob
-                    disp(['Got Qarantine ' num2str(obj.id_number)]);
-                    obj.state_q1=MD_constant_values.protecting_others;
-                    obj.state_q2=MD_constant_values.in_quarantine;
-                    obj.q=MD_constant_values.Q;
+        function [in_quarantine_out] = GetQarantine(obj,i,j,GridPrev, in_quarantine_nr)
+            in_quarantine_out=in_quarantine_nr;
+            if in_quarantine_nr < MD_constant_values.quarantine_capacity
+                if GridPrev(i,j)==MD_constant_values.tested_positive
+                    if obj.state_q2==MD_constant_values.healthy && rand<=MD_constant_values.quarantine_prob
+                        disp(['Got Qarantine ' num2str(obj.id_number)]);
+                        obj.state_q1=MD_constant_values.protecting_others;
+                        obj.state_q2=MD_constant_values.in_quarantine;
+                        obj.q=MD_constant_values.Q;
+                        in_quarantine_out=in_quarantine_nr+1;
+                    end
                 end
             end
         end
@@ -165,13 +169,14 @@ classdef Person < handle
             end
         end
         
-        function [in_hospital_out] = DefineState(obj, GridPrev, in_hospital_nr)
+        function [in_hospital_out, in_quarantine_out] = DefineState(obj, GridPrev, in_hospital_nr, in_quarantine_nr)
             %disp('----------------------------------------------------------')
+            in_quarantine_out = in_quarantine_nr;
             for i=max(obj.pos_x-1,1):min(obj.pos_x+1,MD_constant_values.grid_size)
                 for j=max(obj.pos_y-1,1):min(obj.pos_y+1,MD_constant_values.grid_size)
                     if ~(i==obj.pos_x && j==obj.pos_y)
                         GetInfected(obj,i,j,GridPrev)
-                        GetQarantine(obj,i,j,GridPrev)
+                        in_quarantine_out = GetQarantine(obj,i,j,GridPrev, in_quarantine_nr);
                     end
                 end
             end
