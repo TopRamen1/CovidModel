@@ -1,9 +1,9 @@
 classdef MD_constant_values
     properties (Constant)
         
-    grid_size=10;
-    people_nr=20;    
-    initial_infected_number=10;
+    grid_size=40;
+    people_nr=100;    
+    initial_infected_number=50;
     
     initial_movement_prob=0.5;
     
