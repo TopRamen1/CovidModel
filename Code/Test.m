@@ -1,5 +1,6 @@
 clear all
 close all
+clc
 
 Map=Grid(MD_constant_values.grid_size,MD_constant_values.people_nr);
 Map.InitGrid(MD_constant_values.initial_infected_number);

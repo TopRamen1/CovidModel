@@ -1,9 +1,9 @@
 classdef MD_constant_values
     properties (Constant)
         
-    grid_size=40;
-    people_nr=100;    
-    initial_infected_number=50;
+    grid_size=20;
+    people_nr=50;    
+    initial_infected_number=10;
     
     initial_movement_prob=0.5;
     
@@ -11,18 +11,24 @@ classdef MD_constant_values
     % percentage value of the number of people (people_nr)
     hospital_size = round(0.1*MD_constant_values.grid_size);
     cemetery_size = round(0.2*MD_constant_values.grid_size);
-    
     hospital_capacity = MD_constant_values.hospital_size^2;
-    in_hospital_nr = 0;
 
     %infected
-    infection_prob=0.8;
-    sick_prob = 0.99;
+
+    infection_prob=0.01;
+    sick_prob = 0.015;
+    infected_sick_prob = 0.9;
+
     dead_prob = 0.2;
-    hosp_prob = 0.1;
-    R = 8;
+    hosp_prob = 0.3;
+    sick_hosp_prob = 0.02;
+    test_accuracy = 0.8;
+    test_prob = 0.2;
+    quarantine_prob = 0.2
+    R = 15;
     H = 5;
     S = 5;
+    Q = 10;
     
     simulation_delay=0.5;
     simulation_steps=100;
@@ -33,6 +39,7 @@ classdef MD_constant_values
     protecting_others=2;
     self_protecting=3;
     organizing_protection=4;
+    tested_positive = 5;
     
     % states Q2
     healthy=0;
