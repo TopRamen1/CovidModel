@@ -14,7 +14,7 @@ classdef MD_constant_values
     hosp_prob = 0.03;
     sick_hosp_prob = 0.02;
     test_accuracy = 0.8;
-    test_prob = 0.8;
+    test_prob = 0.2;
     quarantine_prob = 0.2
     R = 15;
     H = 5;
