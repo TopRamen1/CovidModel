@@ -52,7 +52,6 @@ classdef Grid < handle
             healthy_nr=0;
             recovered_nr=0;
             inf_and_s_nr=0;
-            in_hospital_nr = 0;
             dead_nr = 0;
             
             for i=1:obj.people_number
@@ -66,7 +65,7 @@ classdef Grid < handle
                     inf_and_s_nr=inf_and_s_nr+1;
                 end
                 if obj.people(i).state_q2==MD_constant_values.in_hospital;
-                    in_hospital_nr=in_hospital_nr+1;
+                    MD_constant_values.in_hospital_nr=MD_constant_values.in_hospital_nr+1;
                 end
                 if obj.people(i).state_q2==MD_constant_values.dead;
                     dead_nr=dead_nr+1;
@@ -81,7 +80,7 @@ classdef Grid < handle
             movegui(f1,'northeast');
              
             % Hospital
-            hos_size = round(MD_constant_values.hospital_size*obj.size)
+            hos_size = MD_constant_values.hospital_size;
             x1_1=0; x1_2=hos_size; y1_1=0; y1_2 = x1_2;
             pos1 = [x1_1, x1_2, y1_1, y1_2];
             text = 'Hospital';
@@ -90,7 +89,7 @@ classdef Grid < handle
             PlotPlace(in_hospital_nr, pos1, sprintf('%s', text), text_pos1, color, hos_size);
             hold on;
             % Cemetery
-            cem_size = round(MD_constant_values.cemetery_size*obj.size)
+            cem_size = MD_constant_values.cemetery_size;
             shift = 1;
             x2_1=x1_2+shift; x2_2=x2_1+cem_size; y2_1=x2_1; y2_2 = x2_2;
             pos2 = [x2_1, x2_2, y2_1, y2_2];

@@ -8,6 +8,6 @@ for i=1:MD_constant_values.simulation_steps
     disp('----------------------------------------------------------');
     disp(['Iteration ' num2str(i)]);
     Map.SimIteration();
-%     Map.PlotGrid();
+    Map.PlotGrid();
     pause(MD_constant_values.simulation_delay);
 end
