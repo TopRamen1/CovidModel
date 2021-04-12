@@ -119,13 +119,15 @@ classdef Person < handle
         function [in_hospital_out] = GetHospitalized(obj, in_hospital_nr)
             in_hospital_out=in_hospital_nr;
             if in_hospital_nr < MD_constant_values.hospital_capacity
-                if (obj.state_q1==MD_constant_values.infecting || obj.state_q1==MD_constant_values.tested_positive) 
+                if (obj.state_q2==MD_constant_values.infected_and_sick || obj.state_q1==MD_constant_values.tested_positive) 
                     rn = rand;
                     %disp(['rand' num2str(rn)])
                     if rn<=MD_constant_values.hosp_prob
-                        obj.state_q1=MD_constant_values.protecting_others;
-                        obj.state_q2=MD_constant_values.in_hospital;
-                        in_hospital_out=in_hospital_nr+1;
+                        if (obj.state_q1~=MD_constant_values.tested_positive)
+                            obj.state_q1=MD_constant_values.protecting_others;
+                            obj.state_q2=MD_constant_values.in_hospital;
+                            in_hospital_out=in_hospital_nr+1;
+                        end
                         disp(['Got hospitalized ' num2str(obj.id_number)]);
                     end
                 end
@@ -260,10 +262,12 @@ classdef Person < handle
                         GridPrev(obj.pos_x,obj.pos_y)=1;
                     else
                         GridPrev(obj.pos_x,obj.pos_y)=-1;
-                        new_position=randi(length(new_positions)); %%ttt
-                        obj.pos_x=new_positions(new_position,1);
-                        obj.pos_y=new_positions(new_position,2);
-                        GridPrev(obj.pos_x,obj.pos_y)=1;
+                        if ~isempty(new_positions) 
+                            new_position=randi(length(new_positions)); %%ttt
+                            obj.pos_x=new_positions(new_position,1);
+                            obj.pos_y=new_positions(new_position,2);
+                            GridPrev(obj.pos_x,obj.pos_y)=1;
+                        end
                     end
                 end
             end

@@ -11,6 +11,7 @@ classdef Grid < handle
         Recovered;
         InHospital;
         Dead;
+        Tested;
         v;
         in_hospital_nr = 0;
         in_quarantine_nr = 0;
@@ -69,6 +70,8 @@ classdef Grid < handle
             dead_nr = 0;
             hospital_nr = 0;
             quarantine_nr = 0;
+            tested_nr = 0;
+            infected_nr = 0;
             for i=1:obj.people_number
                 if obj.people(i).state_q2==MD_constant_values.healthy;
                     healthy_nr=healthy_nr+1;
@@ -85,14 +88,21 @@ classdef Grid < handle
                 if obj.people(i).state_q2==MD_constant_values.dead;
                     dead_nr=dead_nr+1;
                 end
+                if obj.people(i).state_q2==MD_constant_values.infected || obj.people(i).state_q2==MD_constant_values.infected_and_sick
+                    infected_nr = infected_nr + 1;
+                end
+                if obj.people(i).state_q1 == MD_constant_values.tested_positive
+                    tested_nr = tested_nr + 1;
+                end 
+                if obj.people(i).state_q2==MD_constant_values.in_quarantine;
+                    quarantine_nr=quarantine_nr+1;
+                end    
             end
             
-            infected_nr = obj.people_number - (hospital_nr + dead_nr + recovered_nr + healthy_nr);
+%             infected_nr = obj.people_number - (hospital_nr + dead_nr + recovered_nr + healthy_nr);
             
 
-            if obj.people(i).state_q2==MD_constant_values.in_quarantine;
-                quarantine_nr=quarantine_nr+1;
-            end                
+            
             
             disp(['In hospital: ' num2str(hospital_nr) ', Dead: ' num2str(dead_nr) ', Quarantine: ' num2str(quarantine_nr) ', Healthy: ' num2str(healthy_nr) ', Infected and sick: ' num2str(inf_and_s_nr)]);
             obj.in_hospital_nr = hospital_nr;
@@ -148,12 +158,13 @@ classdef Grid < handle
             obj.Recovered=[obj.Recovered; recovered_nr];
             obj.InHospital = [obj.InHospital; hospital_nr];
             obj.Dead = [obj.Dead; dead_nr];
+            obj.Tested = [obj.Tested; tested_nr];
             
             x = 1:it;
             
-            plot(x,obj.Infected ,x,obj.Healthy ,x,obj.Recovered ,x,obj.InHospital ,x,obj.Dead);
-            legend({'Infected','Healthy','Recovered','In Hospital','Dead'},'Location','best')
-            disp(['len ' num2str(length(obj.Infected)) ' result ' num2str(length(1:it))]);
+            plot(x,obj.Infected ,x,obj.Recovered ,x,obj.InHospital ,x,obj.Dead ,x,obj.Tested);
+            legend({'Infected','Recovered','In Hospital','Dead','Tested'},'Location','best')
+            %disp(['len ' num2str(length(obj.Infected)) ' result ' num2str(length(1:it))]);
 
         end
         
